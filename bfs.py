@@ -35,19 +35,23 @@ def next_states(state):
     return [s for s in possible_states if valid_states(s)]
 
 def bfs(start, goal):
+    required_metrics= {"generated nodes":0, "expanded_nodes":0, "max_frontier_size":0}
     frontier = collections.deque([(start, [start])])
     visited = set()
     visited.add(start)
+    required_metrics["max_frontier_size"]= len(frontier)
 
 
     while frontier:
         current_state, path = frontier.popleft()
+        required_metrics["expanded_nodes"] += 1
         if current_state == goal:
-            return path
+            return path, required_metrics
         for state in next_states(current_state):
             if state not in visited:
                 visited.add(state)
                 frontier.append((state, path + [state]))
+        required_metrics["max_frontier_size"] = max(required_metrics["max_frontier_size"], len(frontier))
     return None
 
 if __name__ == "__main__":

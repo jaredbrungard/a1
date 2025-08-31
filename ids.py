@@ -33,9 +33,14 @@ def next_states(state):
 
     return [s for s in possible_states if valid_states(s)]
 
-def dls(state, goal, path, limit):
+def dls(state, goal, path, limit,required_metrics):
+    
+    required_metrics["expanded_nodes"] += 1
     if state == goal:
         return path
+    
+    new_nodes = next_states(state)
+    required_metrics["generated nodes"] += len(new_nodes)
 
     for next in next_states(state):
         if next not in path:
@@ -45,11 +50,13 @@ def dls(state, goal, path, limit):
     return None # this is where we would return if we get no result before the limit
 
 def ids(start, goal):
+    required_metrics= {"generated nodes":0, "expanded_nodes":0, "max_frontier_size":0}
     depth = 0
     while True:
+        required_metrics["max_frontier_size"]= depth
         result = dls(start, goal, [start], depth)
         if result is not None:
-            return result
+            return result, required_metrics
         depth += 1
 
 if __name__ == "__main__":

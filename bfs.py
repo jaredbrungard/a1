@@ -35,7 +35,7 @@ def next_states(state):
     return [s for s in possible_states if valid_states(s)]
 
 def bfs(start, goal):
-    required_metrics= {"generated nodes":0, "expanded_nodes":0, "max_frontier_size":0}
+    required_metrics= {"generated nodes":1, "expanded_nodes":0, "max_frontier_size":0}
     frontier = collections.deque([(start, [start])])
     visited = set()
     visited.add(start)
@@ -51,16 +51,18 @@ def bfs(start, goal):
             if state not in visited:
                 visited.add(state)
                 frontier.append((state, path + [state]))
+                required_metrics["generated nodes"] += 1
         required_metrics["max_frontier_size"] = max(required_metrics["max_frontier_size"], len(frontier))
     return None
 
 if __name__ == "__main__":
-    #start = (frozenset({"Farmer", "Wolf", "Goat", "Cabbage"}), frozenset())
-    start= (frozenset({"Farmer", "Wolf", "Goat"}), frozenset({"Cabbage"}))
+    start = (frozenset({"Farmer", "Wolf", "Goat", "Cabbage"}), frozenset())
+    #start= (frozenset({"Farmer", "Wolf", "Goat"}), frozenset({"Cabbage"}))
     goal = (frozenset(), frozenset({"Farmer", "Wolf", "Goat", "Cabbage"}))
-    solution = bfs(start, goal)
+    solution, metrics = bfs(start, goal)
     if solution:
         for step in solution:
             print((set(step[0]), set(step[1])))
+        print(metrics)
     else:
         print("No solution found.")
